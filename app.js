@@ -1,8 +1,15 @@
-const  Gameboard =  function () {
+const  Gameboard =  function (marker) {
 
-    const gameboard = ["", "", "", "", "", "", "", "", ""];
-     const resetGameboard = () => {
+    const gameboard = [
+    [marker, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0]
+    ];
+    const resetGameboard = () => {
         gameboard.fill("");
     };
     console.log(gameboard);
-}
+};
+
+
+console.log(Gameboard("X"));
