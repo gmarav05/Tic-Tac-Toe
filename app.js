@@ -5,9 +5,7 @@ const  Gameboard = (marker) => {
     [0, 0, 0],
     [0, 0, 0]
     ];
-    const resetGameboard = () => {
-        gameboard.fill("");
-    };
+    
     console.log(gameboard);
 };
 
@@ -25,6 +23,12 @@ function Player(name, marker) {
     };
     Gameboard(this.marker);
 }
+
+// function Player(name, marker) {
+//     const player1_marker = 'X' 
+
+    
+// }
 
 const player1 = new Player("Arav", "X");
 const player2 = new Player("Alice", "O");
