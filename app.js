@@ -30,8 +30,43 @@ function Player(name, marker) {
     
 // }
 
-const player1 = new Player("Arav", "X");
-const player2 = new Player("Alice", "O");
+// const player1 = new Player("Arav", "X");
+// const player2 = new Player("Alice", "O");
 
-player1.sayName();
-player2.sayName();
+// player1.sayName();
+// player2.sayName();
+
+
+function Gameboard() {
+
+    const rows = 3;
+    const columns = 3;
+
+    const gameboard = [];
+
+    for (let i = 0; i < rows; i++) {
+        
+        gameboard[i] = [];
+
+        for (let j = 0; j < columns; j++) {
+            
+            // gameboard[i] = [];                
+        }
+
+    }
+
+
+    const getBoard = () => gameboard;
+
+    const tokenMarker = (row, column, marker)  => {
+
+
+
+
+    }
+
+
+
+}
+
+
