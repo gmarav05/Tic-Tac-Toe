@@ -1,24 +1,35 @@
 function Gameboard() {
 
-    const rows = 3;
-    const columns = 3;
+    const boardSize = 3;
 
     const gameboard = [];
 
-    for (let i = 0; i < rows; i++) {
+    for (let i = 0; i < boardSize; i++) {
         gameboard[i] = [];
 
-        for (let j = 0; j < columns; j++) {
+        for (let j = 0; j < boardSize; j++) {
             
             gameboard[i].push(Cell());
         }
     }
 
+    const resetBoard = () => {
+        for (let i = 0; i < boardSize; i++) {
+            for (let j = 0; j < boardSize; j++) {
+                gameboard[i][j].resetToken();
+            }
+        }
+    };
+
     const getBoard = () => gameboard;
+    const getBoardSize = () => boardSize;
 
     const addMarker = (row, column, marker)  => {
-        if (gameboard[row][column].getValue() !==0) return
-        gameboard[row][column].addMarker(marker);
+        if (gameboard[row][column].getValue() === 0) {
+            gameboard[row][column].addMarker(marker);
+        } else {
+            return false;
+        }
     };
 
     const printBoard = () => {
