@@ -25,7 +25,6 @@ function Gameboard() {
     return { getBoard, placeMarker , printBoard }
 }
 
-
 function cell() {
     let value = '';
     const addToken = (player) => (value = player);
@@ -33,8 +32,6 @@ function cell() {
 
     return { addToken, getValue };
 }
-
-
 
 function GameController(playerOneName = "Player One", playerTwoName = "Player Two") {
 
@@ -50,6 +47,7 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
 
     const switchPlayerTurn = () => {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
+        updateScreen.createDiv();
     };
 
     const getActivePlayer = () => activePlayer;
@@ -61,10 +59,11 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
 
     const playRound = (row, column) => {
 
-        if (isGameOver) {
-            console.log("Game over please start a new game.");
+        if (isGameOver) { 
+            updateScreen();
             return;
         }
+            
 
         console.log(`${getActivePlayer().name}'s has placed their mark in column ${column}, row ${row}`);
 
@@ -131,7 +130,11 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
         return false;
     };
 
-        printNewRound();
+    
+    const updateScreen = Screen(board, getActivePlayer, switchPlayerTurn, checkForWin);
+    updateScreen.createDiv(); 
+    
+    printNewRound();
 
         return {
         playRound,
@@ -139,13 +142,56 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
         };
 
 };
-        
-const game = GameController("Nihal", "Aravind");
-game.playRound(0,0);
-game.playRound(0,1);
 
-game.playRound(1,0);
-game.playRound(0,2);
 
-game.playRound(2,0);
-game.playRound(1,2);
+function Screen (board, getActivePlayer, switchPlayerTurn, checkForWin) {
+
+    const createDiv = () => {
+
+        const GameD = document.querySelector('.gameboard');
+        GameD.innerHTML = '';
+        const message = document.querySelector('#playersTurn');
+
+        board.getBoard().forEach((row, rowIndex) => {
+            row.forEach((cell, colIndex) => {
+                let div = document.createElement('div');
+                div.style.backgroundColor = 'whitesmoke';
+                div.textContent = cell.getValue();
+                div.setAttribute('class', 'cell');
+                div.style.width = '60px';
+                div.style.height = '60px';
+                div.style.marginLeft = '18px';
+                div.style.border = '1px solid white';
+                div.style.fontSize = '2rem';
+
+                div.addEventListener('click', () => {
+                    if(cell.getValue() === '') {
+                        cell.addToken(getActivePlayer().token);
+                        div.textContent = getActivePlayer().token;
+
+                        if(checkForWin(board.getBoard(),getActivePlayer().token)) {
+                            message.textContent = `${getActivePlayer().name} wins!`
+
+                        } else {
+                            switchPlayerTurn();
+                            message.textContent = `${getActivePlayer().name}'s turn`;
+                        }
+                    }
+                });
+
+                GameD.appendChild(div);
+
+            });
+        });
+    };
+
+    return {createDiv};
+
+}
+
+GameController();
+
+const restart = document.querySelector('#restart');
+restart.addEventListener('click', () => {
+    window.location.reload();
+});
