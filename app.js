@@ -1,72 +1,151 @@
-const  Gameboard = (marker) => {
-
-    const gameboard = [
-    [marker, 0, 0],
-    [0, 0, 0],
-    [0, 0, 0]
-    ];
-    
-    console.log(gameboard);
-};
-
-
-// console.log(Gameboard("X"));
-
-function Player(name, marker) {
-    if (!new.target) {
-        throw Error("You must use the 'new' operator to call the constructor");
-    }
-    this.name = name;
-    this.marker = marker;
-    this.sayName = function() {
-        console.log(this.name);
-    };
-    Gameboard(this.marker);
-}
-
-// function Player(name, marker) {
-//     const player1_marker = 'X' 
-
-    
-// }
-
-// const player1 = new Player("Arav", "X");
-// const player2 = new Player("Alice", "O");
-
-// player1.sayName();
-// player2.sayName();
-
-
 function Gameboard() {
 
-    const boardSize = 3;
-
-    const gameboard = [];
+    const rows = 3;
+    const columns = 3;
+    const board = [];
 
     for (let i = 0; i < rows; i++) {
-        
-        gameboard[i] = [];
-
-        for (let j = 0; j < boardSize; j++) {
-            
-            // gameboard[i] = [];                
+        board[i] = [];
+        for (let j = 0; j < columns; j++) {
+            board[i].push(cell());
         }
-
     }
 
+    const getBoard = () => board;
 
-    const getBoard = () => gameboard;
-    const getBoardSize = () => boardSize;
+    const placeMarker = (row, column, marker)  => {
+        board[row][column].addToken(marker);
+    };
 
-    const tokenMarker = (row, column, marker)  => {
+   const printBoard = () => {
+        const fullBoard = board.map(row => row.map(cell => cell.getValue()));
+        return fullBoard;
+   }
 
-
-
-
-    }
-
-
-
+    return { getBoard, placeMarker , printBoard }
 }
 
 
+function cell() {
+    let value = '';
+    const addToken = (player) => (value = player);
+    const getValue = () => value;
+
+    return { addToken, getValue };
+}
+
+
+
+function GameController(playerOneName = "Player One", playerTwoName = "Player Two") {
+
+    const board = Gameboard();
+
+    const players = [
+        { name: playerOneName, token : 'X' }, 
+        { name: playerTwoName, token : 'O' },
+    ];
+
+    let isGameOver = false;
+    let activePlayer = players[0];
+
+    const switchPlayerTurn = () => {
+        activePlayer = activePlayer === players[0] ? players[1] : players[0];
+    };
+
+    const getActivePlayer = () => activePlayer;
+
+    const printNewRound = () => {
+        console.log(board.printBoard());
+        console.log(`${getActivePlayer().name}'s turn`);
+    };
+
+    const playRound = (row, column) => {
+
+        if (isGameOver) {
+            console.log("Game over please start a new game.");
+            return;
+        }
+
+        console.log(`${getActivePlayer().name}'s has placed their mark in column ${column}, row ${row}`);
+
+        board.placeMarker(row, column, getActivePlayer().token);
+
+        if(checkForWin(board.getBoard(),getActivePlayer().token)) {
+            console.log(`${getActivePlayer().name} wins`);
+            console.log(board.printBoard());
+            isGameOver = true;
+            return;
+        }
+         
+        if(checkForDraw(board.getBoard())) {
+            console.log(`It's a Draw`);
+            console.log(board.printBoard());
+            isGameOver = true;
+            return;
+        }
+
+        switchPlayerTurn();
+        printNewRound();
+    };
+    
+    const checkForDraw = currentBoard => {
+        const flatBoard = currentBoard.flat();
+        return flatBoard.every(cell => cell.getValue() !== '');
+    };
+
+    const checkForWin = (currentBoard, playerToken) => {
+        const boardValues = currentBoard.map(row => 
+            row.map(cell => cell.getValue())
+        );
+
+        const checkLine = line => {
+            return line.every(cellValue => cellValue === playerToken);
+        };
+
+        for(const row of boardValues) {
+            if(checkLine(row)) return true;
+        }
+
+
+        for (let col = 0; col < 3; col++) {
+            const column = boardValues.map(row => row[col]);
+            if(checkLine(column)) return true;   
+        }
+
+        const primaryDiagonal = [
+            boardValues[0][0],
+            boardValues[1][1],
+            boardValues[2][2],
+        ];
+
+        if(checkLine(primaryDiagonal)) return true;
+
+        const secondaryDiagonal = [
+            boardValues[0][2],
+            boardValues[1][1],
+            boardValues[2][0],
+        ];
+
+        if(checkLine(secondaryDiagonal)) return true;
+
+        return false;
+    };
+
+        printNewRound();
+
+        return {
+        playRound,
+        getActivePlayer,
+        };
+
+};
+        
+const game = GameController("Nihal", "Aravind");
+game.playRound(0,0);
+game.playRound(0,1);
+
+game.playRound(1,0);
+game.playRound(0,2);
+
+game.playRound(2,0);
+game.playRound(1,2);
